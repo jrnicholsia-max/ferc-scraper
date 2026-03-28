@@ -61,10 +61,14 @@ def parse_search_hits(json_data):
     records = []
 
     for hit in hits:
+        title = hit.get("description") or hit.get("documentTitle") or "No title"
+        if "service list" in title.lower():
+            continue
+
         accession_number = hit.get("acesssionNumber") or hit.get("accessionNumber") or ""
 
         records.append({
-            "title": hit.get("description") or hit.get("documentTitle") or "No title",
+            "title": title,
             "date": hit.get("filedDate") or hit.get("issuedDate") or hit.get("postedDate") or "",
             "accession_number": accession_number,
             "accession_url": f"https://elibrary.ferc.gov/eLibrary/filelist?accession_number={accession_number}" if accession_number else "",
