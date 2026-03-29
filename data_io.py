@@ -1,10 +1,14 @@
 from paths import input_path, output_path
 from datetime import date, datetime
 from openpyxl import Workbook, load_workbook
+from pathlib import Path
 
 
 def format_date(value):
     """Convert a worksheet date or string into ISO format for the API."""
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+
     if isinstance(value, date):
         return value.isoformat()
 
@@ -12,9 +16,14 @@ def format_date(value):
         value = value.strip()
         if not value:
             raise ValueError("empty date string")
-        if value.count("-") == 2:
-            return value
-        for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d"):
+        for fmt in (
+            "%Y-%m-%d",
+            "%m/%d/%Y",
+            "%m-%d-%Y",
+            "%Y/%m/%d",
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d %H:%M",
+        ):
             try:
                 return datetime.strptime(value, fmt).date().isoformat()
             except ValueError:
@@ -23,10 +32,18 @@ def format_date(value):
     raise ValueError(f"Unsupported start date format: {value!r}")
 
 
-def load_dockets():
-    """Load docket numbers and start dates from the Excel worksheet."""
+def load_dockets(sheet_name=None):
+    """Load docket numbers and start dates from a named Excel worksheet."""
     workbook = load_workbook(input_path)
-    worksheet = workbook.active
+    if sheet_name is None:
+        worksheet = workbook.active
+    else:
+        if sheet_name not in workbook.sheetnames:
+            available = ", ".join(workbook.sheetnames)
+            raise ValueError(
+                f"Worksheet '{sheet_name}' not found in {input_path}. Available sheets: {available}"
+            )
+        worksheet = workbook[sheet_name]
     docket_rows = []
 
     for row in worksheet.iter_rows(min_row=2, min_col=1, max_col=2):
@@ -61,6 +78,15 @@ def load_results():
             workbook.remove(workbook[sheet_name])
 
     return workbook
+
+
+def build_run_output_path(api_key, run_date=None):
+    """Build a dated output filename for the current run in the data directory."""
+    run_day = run_date or date.today()
+    stamp = run_day.strftime("%m.%d.%Y")
+    output_dir = Path(output_path).parent
+    filename = f"{str(api_key).strip().lower()}-{stamp}.xlsx"
+    return str(output_dir / filename)
 
 
 def create_result_sheet(workbook, docket, records, template_name="TEMPLATE"):
