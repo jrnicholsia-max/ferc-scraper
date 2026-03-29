@@ -15,5 +15,5 @@ __pycache__/
 # OS files
 .DS_Store
 
-# Data files
-data/ # May temporarily turn off if changes to input/output file structures.
+# Data files - may temporarily turn off if changes to input/output file structures.
+data/
