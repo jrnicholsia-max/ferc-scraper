@@ -1,5 +1,4 @@
 from paths import input_path, output_path
-from ferc_api import fetch_search_results, parse_search_hits
 from excel_io import (format_date, load_dockets,
                        load_results, create_result_sheet)
 from datetime import date
