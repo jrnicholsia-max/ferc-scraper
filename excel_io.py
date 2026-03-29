@@ -55,7 +55,7 @@ def load_results():
     workbook = load_workbook(output_path)
 
     if "TEMPLATE" not in workbook.sheetnames:
-        raise ValueError(f"{path} must contain a sheet named 'TEMPLATE'.")
+        raise ValueError(f"{output_path} must contain a sheet named 'TEMPLATE'.")
 
     for sheet_name in list(workbook.sheetnames):
         if sheet_name != "TEMPLATE":
