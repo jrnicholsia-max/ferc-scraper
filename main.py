@@ -19,13 +19,13 @@ def main(api="ferc"):
     api_module = load_api(api)
     print(f"Using INPUT_FILE={input_path}, OUTPUT_FILE={output_path}, API={api}")
 
-    workbook, docket_rows = load_dockets(input_path)
+    workbook, docket_rows = load_dockets()
     if not docket_rows:
         print(f"No docket rows found in {input_path}.")
         return
 
     try:
-        results_workbook = load_results(output_path)
+        results_workbook = load_results()
     except Exception as exc:
         print(f"Unable to load results workbook: {exc}")
         return
