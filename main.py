@@ -5,7 +5,7 @@ from datetime import date
 from importlib import import_module
 
 ALLOWED_APIS = {
-    "ferc": "ferc_api",
+    "ferc": "api_modules.ferc_api",
 }
 
 def load_api(api_key):

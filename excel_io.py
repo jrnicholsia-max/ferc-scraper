@@ -1,5 +1,4 @@
 from paths import input_path, output_path
-import os
 from datetime import date, datetime
 from openpyxl import Workbook, load_workbook
 
